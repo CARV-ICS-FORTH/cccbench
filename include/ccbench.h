@@ -204,7 +204,7 @@ const char* moesi_type_des[] =
 #  endif
 #endif
 
-inline void
+static inline void
 set_cpu(int cpu) 
 {
 #if defined(__sparc__)
