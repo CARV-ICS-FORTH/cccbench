@@ -117,7 +117,7 @@ main(int argc, char **argv)
     };
 
   int i;
-  char c;
+  signed char c;
   while(1) 
     {
       i = 0;
@@ -1050,7 +1050,8 @@ main(int argc, char **argv)
 	  if (ID < 2)
 	    {
 	      PFDI(0);
-	      _mm_pause();
+	      PAUSE();
+	      //_mm_pause();
 	      PFDO(0, reps);
 	    }
 	  break;

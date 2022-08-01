@@ -32,6 +32,9 @@
 
 #include <inttypes.h>
 
+
+
+
 #ifdef __sparc__
 /*
  *  sparc code
@@ -90,6 +93,72 @@ uint8_t oldval;
 
 #  define _mm_clflush(x) asm volatile("nop");
 //end of sparc code
+//
+
+#elif defined(__aarch64__)
+
+//#include <sys/atomic.h>
+//
+#include "atomic.h"
+
+//test-and-set uint8_t
+static inline uint8_t tas_uint8(volatile uint8_t *addr) {
+    uint8_t oldval;
+    oldval = __atomic_test_and_set(addr, __ATOMIC_ACQUIRE);
+    return oldval;
+}
+
+//Compare-and-swap
+#  define CAS_PTR(a,b,c) shoud fail to compile! CAS_PTR has broken semantics and I refuse to port it!
+#  define CAS_U8(a,b,c) atomic_cas_8(a,b,c)
+#  define CAS_U16(a,b,c) atomic_cas_16(a,b,c)
+#  define CAS_U32(a,b,c) atomic_cas_32(a,b,c)
+#  define CAS_U64(a,b,c) atomic_cas_64(a,b,c)
+//Swap
+#  define SWAP_PTR(a,b) also broken semantics, will not port
+#  define SWAP_U8(a,b) __atomic_exchange_n(a, b, __ATOMIC_ACQUIRE)
+#  define SWAP_U16(a,b) __atomic_exchange_n(a, b, __ATOMIC_ACQUIRE) 
+#  define SWAP_U32(a,b) __atomic_exchange_n(a, b, __ATOMIC_ACQUIRE)
+#  define SWAP_U64(a,b) __atomic_exchange_n(a, b, __ATOMIC_ACQUIRE)
+//Fetch-and-increment
+#  define FAI_U8(a)  __atomic_fetch_add(a, 1, __ATOMIC_ACQUIRE)
+#  define FAI_U16(a) __atomic_fetch_add(a, 1, __ATOMIC_ACQUIRE)
+#  define FAI_U32(a) __atomic_fetch_add(a, 1, __ATOMIC_ACQUIRE)
+#  define FAI_U64(a) __atomic_fetch_add(a, 1ULL, __ATOMIC_ACQUIRE)
+//Fetch-and-decrement
+#  define FAD_U8(a)  __atomic_fetch_sub(a, 1, __ATOMIC_ACQUIRE)
+#  define FAD_U16(a) __atomic_fetch_sub(a, 1, __ATOMIC_ACQUIRE)
+#  define FAD_U32(a) __atomic_fetch_sub(a, 1, __ATOMIC_ACQUIRE)
+#  define FAD_U64(a) __atomic_fetch_sub(a, 1LLU, __ATOMIC_ACQUIRE)
+//Increment-and-fetch
+#  define IAF_U8(a)  __atomic_add_fetch(a, 1, __ATOMIC_ACQUIRE)
+#  define IAF_U16(a) __atomic_add_fetch(a, 1, __ATOMIC_ACQUIRE)
+#  define IAF_U32(a) __atomic_add_fetch(a, 1, __ATOMIC_ACQUIRE)
+#  define IAF_U64(a) __atomic_add_fetch(a, 1LLU, __ATOMIC_ACQUIRE)
+//Decrement-and-fetch
+#  define DAF_U8(a)  __atomic_sub_fetch(a, 1, __ATOMIC_ACQUIRE)
+#  define DAF_U16(a) __atomic_sub_fetch(a, 1, __ATOMIC_ACQUIRE)
+#  define DAF_U32(a) __atomic_sub_fetch(a, 1, __ATOMIC_ACQUIRE)
+#  define DAF_U64(a) __atomic_sub_fetch(a, 1LLU, __ATOMIC_ACQUIRE)
+//Test-and-set
+#  define TAS_U8(a) tas_uint8(a)
+//Memory barrier
+//#  define MEM_BARRIER  asm volatile("membar #LoadLoad | #LoadStore | #StoreLoad | #StoreStore"); 
+//#  define _mm_lfence() asm volatile("membar #LoadLoad | #LoadStore");
+//#  define _mm_sfence() asm volatile("membar #StoreLoad | #StoreStore"); 
+//#  define _mm_mfence() asm volatile("membar #LoadLoad | #LoadStore | #StoreLoad | #StoreStore"); 
+//
+#  define MEM_BARRIER  asm volatile("dmb sy"); 
+#  define _mm_lfence() asm volatile("dmb ld");
+#  define _mm_sfence() asm volatile("dmb st"); 
+#  define _mm_mfence() asm volatile("dmb sy"); 
+#  define _mm_clflush(x) asm volatile("dc civac, %0":: "r" (x) : "memory");
+//end of aarch64 code
+
+
+
+
+
 #elif defined(__tile__)
 /*
  *  Tilera code

@@ -39,7 +39,17 @@
 
 typedef uint64_t ticks;
 
-#if defined(__i386__)
+#if defined(__aarch64__)
+static inline ticks
+getticks(void)
+{
+  register ticks ret;
+
+//  __asm__ __volatile__("mrs %0, cntpct_el0" : "=r" (ret)::"mem");
+  __asm__ __volatile__("mrs %0, cntvct_el0" : "=r" (ret));
+  return ret;
+}
+#elif defined(__i386__)
 static inline ticks 
 getticks(void) 
 {
@@ -70,6 +80,12 @@ static inline ticks getticks()
 {
   return get_cycle_count();
 }
+#else
+#include <arch/cycle.h>
+static inline ticks getticks()
+{
+  return get_cycle_count();
+}
 #endif
 
 
@@ -79,6 +95,8 @@ static inline ticks getticks()
 #  if defined(__x86_64__) | defined(__i386__)
 #    define PREFETCHW(x) asm volatile("prefetchw %0" :: "m" (*(unsigned long *)x)) /* write */
 #  elif defined(__sparc__)
+#    define PREFETCHW(x) __builtin_prefetch((const void*) x, 1, 3)
+#  elif defined(__aarch64__)
 #    define PREFETCHW(x) __builtin_prefetch((const void*) x, 1, 3)
 #  elif defined(__tile__)
 #    define PREFETCHW(x) tmc_mem_prefetch (x, 64)

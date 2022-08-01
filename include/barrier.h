@@ -68,6 +68,8 @@ void barriers_term();
 #ifdef __sparc__
 #  define PAUSE()    asm volatile("rd    %%ccr, %%g0\n\t"	\
 				::: "memory")
+#elif defined(__aarch64__)
+#define PAUSE() asm volatile("isb")
 #elif defined(__tile__)
 #define PAUSE() cycle_relax()
 #else
