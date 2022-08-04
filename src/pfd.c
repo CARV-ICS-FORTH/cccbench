@@ -30,6 +30,7 @@
 #include "pfd.h"
 #include <math.h>
 #include "atomic_ops.h"
+#include <unistd.h>
 
 volatile ticks** pfd_store;
 volatile ticks* _pfd_s;
@@ -172,17 +173,13 @@ get_abs_deviation(volatile ticks* vals, const size_t num_vals, abs_deviation_t* 
   uint32_t i;
   for (i = 0; i < num_vals; i++)
     {
-      if ((int64_t) vals[i] < 0 || vals[i] > PFD_VAL_UP_LIMIT)
-	{
-	  vals[i] = 0;
-	}
       sum_vals += vals[i];
     }
 
   double avg = sum_vals / (double) num_vals;
   abs_dev->avg = avg;
-  double max_val = 0;
-  double min_val = DBL_MAX;
+  double max_val = vals[0];
+  double min_val = vals[0];
   uint64_t max_val_idx = 0, min_val_idx = 0;
   uint32_t num_dev_10p = 0; ticks sum_vals_10p = 0; double dev_10p = 0.1 * avg;
   uint32_t num_dev_25p = 0; ticks sum_vals_25p = 0; double dev_25p = 0.25 * avg;

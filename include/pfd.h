@@ -36,18 +36,21 @@
 #include <stdlib.h>
 #include "common.h"
 
+#include <time.h>
 
-typedef uint64_t ticks;
+
+typedef signed long long int ticks;
 
 #if defined(__aarch64__)
+
+#define FIXED_TICK_FACTOR 128
 static inline ticks
 getticks(void)
 {
-  register ticks ret;
-
-//  __asm__ __volatile__("mrs %0, cntpct_el0" : "=r" (ret)::"mem");
-  __asm__ __volatile__("mrs %0, cntvct_el0" : "=r" (ret));
-  return ret;
+  ticks ret;
+  __asm__ __volatile__("isb");
+  __asm__ __volatile__("mrs %0, cntvct_el0" : "=r" (ret)::"memory");
+  return ret * FIXED_TICK_FACTOR;
 }
 #elif defined(__i386__)
 static inline ticks 
