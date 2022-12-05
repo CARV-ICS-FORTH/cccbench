@@ -7,7 +7,7 @@ cccbench (carv-ccbench) is a modification of ccbench, written by Vasileios Trigo
 2. Adds a programming interface that allows ccbench to be used as a library.
 3. Through the use of hwloc, it allows the choice of instrumentor core selection and buffer binding to a NUMA node passed as parameter(those options are currently supported only in the library version).
 
-For a reference to the standalone use of cccbench, refer to the orig-README.md (the interface is the same as the original ccbench)
+For a reference to the standalone use of cccbench, refer to the [original README file of ccbench](orig-README.md) (the interface is the same as the original ccbench)
 For the library version of cccbench, refer to the header file in the source code: include/lib-ccbench.h 
 
 
