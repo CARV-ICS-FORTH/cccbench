@@ -1,13 +1,11 @@
 cccbench
 =======
 
-cccbench (carv-ccbench) is a modification of ccbench, written by Vasileios Trigonakis <vasileios.trigonakis@epfl.ch>. Its purpose is for measuring the cache-coherence latencies of a processor, i.e., the latencies of `loads`, `stores`, `compare-and-swap (CAS)`, `fetch-and-increment (FAI)`, `test-and-set (TAS)`, and `swap (SWAP)`. The latencies that ccbench measures can be used to understand and predict the behavior of sharing and synchronization on the underlying hardware platform. CARV ccbench contributes Three new features to the original ccbench.
+cccbench (carv-ccbench) is a benchmark that measures the communication latency between two cores for very small (single cache line) messages.
+To achieve this, the benchmark ping-pongs a single cache line between the two cores.
+The initial inspitation for this benchmark is ccbench, written by Vasileios Trigonakis <vasileios.trigonakis@epfl.ch>. In fact before deciding to write
+a benchmark from scratch, we decided to adapt ccbench to our requirements. Although, we have now taken a different approach, the porting effort and additional features we added to the original ccbench can be found in the `ccbench-port` branch of this repository.
 
-1. Ports it to arm64 architecture
-2. Adds a programming interface that allows ccbench to be used as a library.
-3. Through the use of hwloc, it allows the choice of instrumentor core selection and buffer binding to a NUMA node passed as parameter(those options are currently supported only in the library version).
-
-For a reference to the standalone use of cccbench, refer to the [original README file of ccbench](orig-README.md) (the interface is the same as the original ccbench)
-For the library version of cccbench, refer to the header file in the source code: include/lib-ccbench.h 
-
+cccbench can be used as a standalone tool or as a library. Within the source directory an example script `example-script.sh` is provided, demonstrating how to benchmark can be used to create a csv file, for a multi-iterration run that collects results for a set of cores of a machine.
+The library interface of cccbench can be found in the `c2c.h` header file
 
