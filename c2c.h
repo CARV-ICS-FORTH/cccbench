@@ -30,6 +30,7 @@ uint64_t *run_test(unsigned int, unsigned int);
 void generate_statistics(int64_statistics *, int64_t *, int64_t *, uint64_t , int );
 int free_and_set_spin_barriers(uint64_t *);
 int set_spin_barriers_no_free(uint64_t *);
+int clear_spin_barrier_for_next_initialization(void);
 
 #endif //_C2C_H_
 

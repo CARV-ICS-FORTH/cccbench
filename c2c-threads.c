@@ -239,6 +239,11 @@ int set_spin_barriers_no_free(uint64_t *new_spin_barrier_buffer)
     return 0;
 }
 
+int clear_spin_barrier_for_next_initialization()
+{
+    return free_and_set_spin_barriers((uint64_t *)NULL);
+}
+
 
 uint64_t initialize_and_callibrate(int a_random_number)
 {
@@ -257,7 +262,10 @@ uint64_t initialize_and_callibrate(int a_random_number)
     else
     {
         ret = posix_memalign((void **)&shared_buffer, getpagesize(), buff_size);    
-	    ret |= posix_memalign((void **)&spin_barriers, getpagesize(), spin_barrier_sz());    
+    }
+    if(NULL == spin_barriers)
+    {
+        ret |= posix_memalign((void **)&spin_barriers, getpagesize(), spin_barrier_sz());
     }
     memset((uint64_t *)spin_barriers, 0, spin_barrier_sz());
     pthread_barrier_init(&tbarrier, NULL, 2);
