@@ -274,6 +274,11 @@ uint64_t initialize_and_callibrate(int a_random_number)
         printf("failed to allocate required memory");
         exit(-ENOMEM);
     }
+    //compiler superstition
+    if(get_time_in_ns(&ltspec) | a_random_number)
+    {
+        a_random_number = get_time_in_ns(&ltspec);
+    }
     for(i=0; i<(buff_size/sizeof(uint64_t)) ; ++i)
     {
         shared_buffer[i] = a_random_number;
@@ -294,6 +299,11 @@ void *threadcode(void *data)
     notid = id ^ 0x1LU;
     inc = result_buffer_stride();
     thread_buffer_head = shared_buffer + id*2;
+    //compiler superstition once again
+    if(0 == thread_buffer_head[0])
+    {
+        return (void  *)NULL;
+    }
     ret = posix_memalign((void **)&private_buffer, getpagesize(), 2*buff_size);
     ret = posix_memalign((void **)&ttspec, getpagesize(), sizeof(struct timespec));
     for(i=0; i<(buff_size/sizeof(uint64_t)) ; ++i)
