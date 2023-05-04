@@ -278,14 +278,6 @@ uint64_t initialize_and_callibrate(int a_random_number)
     {
         shared_buffer[i] = a_random_number;
     }
-    for(i=0; i<NUM_OF_SAMPLES ; ++i)
-    {
-#ifndef NO_CLOCK
-        shared_buffer[i] = get_time_in_ns(&ltspec);
-#else
-        shared_buffer[i] = a_random_number;
-#endif
-    }
 }
 
 void *threadcode(void *data)
