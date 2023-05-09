@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
         exit(-1);
     }
     inc = result_buffer_stride();
-    fprintf(outfp,"xcore,ycore,iteration,xylat");
+    fprintf(outfp,"xcore,ycore,iteration,xylat\n");
     for(i=0; i<iterations; ++i)
     {
         sleep(1); //let the cores cool a bit
