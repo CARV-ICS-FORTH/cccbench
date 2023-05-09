@@ -13,6 +13,6 @@ alltoall: c2c-threads.o
 	gcc -o $@   -I$(ROOTDIR) $(ROOTDIR)/usecases/alltoall.c c2c-threads.o -lm -lpthread
 
 fixed-alltoall: c2c-threads.o
-	gcc -g -o $@   -I$(ROOTDIR) $(ROOTDIR)/usecases/fixed-alltoall.c c2c-threads.o -lm -lpthread
+	gcc -o $@   -I$(ROOTDIR) $(ROOTDIR)/usecases/fixed-alltoall.c c2c-threads.o -lm -lpthread
 clean:
 	rm -f tc2c tc2c-debug log-tc2c alltoall fixed-alltoall *.o
