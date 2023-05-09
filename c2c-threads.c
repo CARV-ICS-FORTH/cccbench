@@ -217,7 +217,7 @@ void sef_set_affinity(uint64_t core_to_pin)
     res = pthread_setaffinity_np(selft, sizeof(cpu_set_t), &cset);
     if (0 != res)
     {
-        printf("Fatal Error: failed to set thread affinity core:%d\n", core_to_pin);
+        printf("Fatal Error: failed to set thread affinity core:%lu\n", core_to_pin);
         fflush(stdout);
         exit(-1);
     }
