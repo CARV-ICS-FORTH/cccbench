@@ -9,3 +9,6 @@ a benchmark from scratch, we decided to adapt ccbench to our requirements. Altho
 cccbench can be used as a standalone tool or as a library. Within the source directory an example script `example-script.sh` is provided, demonstrating how to benchmark can be used to create a csv file, for a multi-iteration run that collects results for a set of cores of a machine.
 The library interface of cccbench can be found in the `c2c.h` header file
 
+## System Requirements
+- OS: linux
+- At least 2 cores 
