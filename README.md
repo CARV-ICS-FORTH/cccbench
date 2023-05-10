@@ -12,3 +12,20 @@ The library interface of cccbench can be found in the `c2c.h` header file
 ## System Requirements
 - OS: linux
 - At least 2 cores 
+
+## Use
+
+### Example 1
+
+```
+git clone https://github.com/CARV-ICS-FORTH/cccbench.git
+Make all
+./example-script.sh
+```
+### Example 2
+
+```
+git clone https://github.com/CARV-ICS-FORTH/cccbench.git
+Make alltoall
+./alltoall 0 8 4 alltoall-cores0to8-4iterations.csv
+```
