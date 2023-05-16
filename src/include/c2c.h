@@ -1,6 +1,8 @@
 #ifndef _C2C_H_
 #define _C2C_H_
 
+#include <stdint.h>
+
 #ifndef CACHE_LINE
 #define CACHE_LINE 64
 #endif
@@ -11,7 +13,7 @@
 #define HIST_SIZE_LOG2 10
 #define HIST_SIZE (1<<HIST_SIZE_LOG2)
 #endif
-
+ 
 typedef struct{
     uint64_t count;
     int64_t sum;
