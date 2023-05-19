@@ -19,13 +19,20 @@ The library interface of cccbench can be found in the `c2c.h` header file
 
 ```
 git clone https://github.com/CARV-ICS-FORTH/cccbench.git
-Make all
+mkdir build
+cd build
+cmake ..
+make
+cp ../scripts/example-script.sh .
 ./example-script.sh
 ```
 ### Example 2
 
 ```
 git clone https://github.com/CARV-ICS-FORTH/cccbench.git
-Make alltoall
+mkdir build
+cd build
+cmake ..
+make
 ./alltoall 0 8 4 alltoall-cores0to8-4iterations.csv
 ```
