@@ -45,7 +45,8 @@ add_executable(alltoall 		src/usecases/alltoall.c )
 target_link_libraries(alltoall c2c)
 add_executable(fixed-alltoall 	src/usecases/fixed-alltoall.c )
 target_link_libraries(fixed-alltoall c2c)
-
+add_executable(linearsweep-alltoall 	src/usecases/linearsweep-alltoall.c )
+target_link_libraries(linearsweep-alltoall c2c)
 
 
 #-------Detect optional dependencies for complex use cases-------
