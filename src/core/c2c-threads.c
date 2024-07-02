@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/stat.h>
+#include <sys/mman.h>
 #include <stdint.h>
 #include <time.h>
 #include <pthread.h>
@@ -227,7 +228,8 @@ int free_and_set_spin_barriers(uint64_t *new_spin_barrier_buffer)
 {
     if(NULL != spin_barriers)
     {
-        free((void *)spin_barriers);
+        //free((void *)spin_barriers);
+        munmap((void *)spin_barriers, spin_barrier_sz());
     }
     spin_barriers = new_spin_barrier_buffer;
     return 0;
@@ -261,11 +263,25 @@ uint64_t initialize_and_callibrate(int a_random_number)
     }
     else
     {
-        ret = posix_memalign((void **)&shared_buffer, getpagesize(), buff_size);    
+       shared_buffer = mmap((void *)0, buff_size, PROT_READ|PROT_WRITE,
+                 MAP_ANONYMOUS|MAP_PRIVATE,-1, 0);
+        if(!shared_buffer || (void *)-1 == shared_buffer)
+        {
+            fprintf(stderr, "failed to allocate shared buffer!\n");
+            ret = 1;
+        }
+    //    ret = posix_memalign((void **)&shared_buffer, getpagesize(), buff_size);    
     }
     if(NULL == spin_barriers)
     {
-        ret |= posix_memalign((void **)&spin_barriers, getpagesize(), spin_barrier_sz());
+       spin_barriers = mmap((void *)0, spin_barrier_sz(), PROT_READ|PROT_WRITE,
+                 MAP_ANONYMOUS|MAP_PRIVATE,-1, 0);
+        if(!spin_barriers || (void *)-1 == spin_barriers)
+        {
+            fprintf(stderr, "failed to allocate spin barriers!\n");
+            ret = 1;
+        }
+        //ret |= posix_memalign((void **)&spin_barriers, getpagesize(), spin_barrier_sz());
     }
     memset((uint64_t *)spin_barriers, 0, spin_barrier_sz());
     pthread_barrier_init(&tbarrier, NULL, 2);
@@ -304,8 +320,22 @@ void *threadcode(void *data)
     {
         return (void  *)NULL;
     }
-    ret = posix_memalign((void **)&private_buffer, getpagesize(), 2*buff_size);
-    ret = posix_memalign((void **)&ttspec, getpagesize(), sizeof(struct timespec));
+    private_buffer = mmap((void *)0, 2*buff_size, PROT_READ|PROT_WRITE,
+                 MAP_ANONYMOUS|MAP_PRIVATE,-1, 0);
+    if(!private_buffer || (void *)-1 == private_buffer)
+    {
+        fprintf(stderr, "failed to allocate private buffer, aborting!\n");
+        exit(-1);
+    }
+    //ret = posix_memalign((void **)&private_buffer, getpagesize(), 2*buff_size);
+    //ret = posix_memalign((void **)&ttspec, getpagesize(), sizeof(struct timespec));
+    ttspec = mmap((void *)0, sizeof(struct timespec), PROT_READ|PROT_WRITE,
+                 MAP_ANONYMOUS|MAP_PRIVATE,-1, 0);
+    if(!ttspec || (void *)-1 == ttspec)
+    {
+        fprintf(stderr, "failed to allocate ttspec, aborting!\n");
+        exit(-1);
+    }
     for(i=0; i<(buff_size/sizeof(uint64_t)) ; ++i)
     {
         private_buffer[i] = id;
@@ -328,8 +358,10 @@ void *threadcode(void *data)
         thread_buffer_head[inc*i] = private_buffer[2*i]; //we do this independently of NO_CLOCK for future debugging reasons
         thread_buffer_head[inc*i+1] = private_buffer[2*i+1];
     }
-    free(private_buffer);
-    free(ttspec);
+    //free(private_buffer);
+    //free(ttspec);
+    munmap(private_buffer, 2*buff_size);
+    munmap(ttspec, sizeof(struct timespec));
     return NULL;
 }
 
