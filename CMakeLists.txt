@@ -51,16 +51,6 @@ target_link_libraries(linearsweep-alltoall c2c)
 
 #-------Detect optional dependencies for complex use cases-------
 
-#Detect Boost (only needed for some usecases)
-#set(Boost_VERBOSE ON)
-find_package(Boost 1.74.0 COMPONENTS program_options )
-message("BOOST includes at ${Boost_INCLUDE_DIRS}")
-message("BOOST libraries are ${Boost_LIBRARIES}")
-if(${BOOST_FOUND})
-	include_directories(${Boost_INCLUDE_DIRS})
-else(${BOOST_FOUND})
-	message("BOOST was not found.")
-endif(${BOOST_FOUND})
 
 #Detect PAPI 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
@@ -70,12 +60,23 @@ if(!${PAPI_FOUND})
 endif(!${PAPI_FOUND})
 
 #-------Generate complex use cases -------
+#Detect Boost (only needed for some usecases)
+#set(Boost_VERBOSE ON)
+find_package(Boost 1.74.0 COMPONENTS program_options )
+message("BOOST includes at ${Boost_INCLUDE_DIRS}")
+message("BOOST libraries are ${Boost_LIBRARIES}")
+if(${BOOST_FOUND})
+	include_directories(${Boost_INCLUDE_DIRS})
+    add_executable(llbench 	src/usecases/llbench.cpp )
+    target_link_libraries(llbench c2c)
+    target_link_libraries(llbench ${Boost_LIBRARIES})
+    if(${PAPI_FOUND})
+	    target_link_libraries(llbench ${PAPI_LIBRARIES})
+    endif(${PAPI_FOUND})
+else(${BOOST_FOUND})
+	message("BOOST was not found.")
+endif(${BOOST_FOUND})
 
-add_executable(llbench 	src/usecases/llbench.cpp )
-target_link_libraries(llbench c2c)
-target_link_libraries(llbench ${Boost_LIBRARIES})
-if(${PAPI_FOUND})
-	target_link_libraries(llbench ${PAPI_LIBRARIES})
-endif(${PAPI_FOUND})
+
 
 
